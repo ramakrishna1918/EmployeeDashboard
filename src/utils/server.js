@@ -1,0 +1,132 @@
+import Swal from 'sweetalert2';
+
+export const fetchEmployees = async () => {
+  try {
+    const response = await fetch('https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data', {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error(`Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return Array.isArray(data) ? data : data.data && Array.isArray(data.data) ? data.data : [];
+  } catch (error) {
+    console.error('Fetch Error:', error.message);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error!',
+      text: `Failed to load employees: ${error.message}`,
+      showConfirmButton: true,
+    });
+    return [];
+  }
+};
+
+export const addEmployee = async (newEmployee, employees, setEmployees, setIsAdding) => {
+  try {
+    const response = await fetch('https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newEmployee),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Status: ${response.status}, Message: ${errorText}`);
+    }
+    const addedEmployee = await response.json();
+    const employeeToAdd = Array.isArray(addedEmployee) ? addedEmployee[addedEmployee.length - 1] : addedEmployee.id ? addedEmployee : { ...newEmployee, id: Date.now() };
+    setEmployees([...employees, employeeToAdd]);
+    setIsAdding(false);
+    Swal.fire({
+      icon: 'success',
+      title: 'Added!',
+      text: `${newEmployee.firstName} ${newEmployee.lastName}'s data has been added.`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } catch (error) {
+    console.error('Add Error:', error.message);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error!',
+      text: `Failed to add employee: ${error.message}`,
+      showConfirmButton: true,
+    });
+  }
+};
+
+export const updateEmployee = async (id, updatedEmployee, employees, setEmployees, setIsEditing) => {
+  try {
+    const response = await fetch(`https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedEmployee),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Status: ${response.status}, Message: ${errorText}`);
+    }
+    const updatedData = await response.json();
+    const employeeToUpdate = updatedData.id ? updatedData : { ...updatedEmployee };
+    setEmployees(
+      employees.map((employee) =>
+        employee.id === id ? employeeToUpdate : employee
+      )
+    );
+    setIsEditing(false);
+    Swal.fire({
+      icon: 'success',
+      title: 'Updated!',
+      text: `${updatedEmployee.firstName} ${updatedEmployee.lastName}'s data updated.`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } catch (error) {
+    console.error('Update Error:', error.message);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error!',
+      text: `Failed to update employee: ${error.message}`,
+      showConfirmButton: true,
+    });
+  }
+};
+
+export const deleteEmployee = async (id, employees, setEmployees) => {
+  const [employee] = employees.filter((employee) => employee.id === id);
+  try {
+    const response = await fetch(`https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data/${id}`,
+      {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Status: ${response.status}, Message: ${errorText}`);
+    }
+    setEmployees(employees.filter((employee) => employee.id !== id));
+    Swal.fire({
+      icon: 'success',
+      title: 'Deleted!',
+      text: `${employee.firstName} ${employee.lastName}'s data has been deleted.`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } catch (error) {
+    console.error('Delete Error:', error.message);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error!',
+      text: `Failed to delete employee: ${error.message}`,
+      showConfirmButton: true,
+    });
+    throw error;
+  }
+};
