@@ -49,13 +49,13 @@ Open a terminal in the project folder.
 
 -Type this command and press Enter to create the app container:
 
-docker build -t my-employee-manager-app .
+docker build -t employeedashboard .
 
 Step 2: Run the Container
 
 -Type this command and press Enter to start the app:
 
-docker run -p 3000:3000 my-employee-manager-app
+docker run -p 3000:3000 employeedashboard
 
 -Open your browser and go to http://localhost:3000.
 
