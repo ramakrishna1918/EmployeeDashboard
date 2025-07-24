@@ -20,82 +20,83 @@ const Add = ({ employees, setEmployees, setIsAdding }) => {
         showConfirmButton: true,
       });
     }
-    const newEmployee = {
-      empID,
-      firstName,
-      lastName,
-      email,
-      salary: String(salary),
-      date,
-    };
+    const newEmployee = { empID, firstName, lastName, email, salary: String(salary), date };
     await addEmployee(newEmployee, employees, setEmployees, setIsAdding);
   };
 
   return (
-    <div className="small-container">
-      <form onSubmit={handleAdd}>
-        <h1 style={{ textAlign: 'center' }}>Add Employee</h1>
-        <div className="form-container" >
-          <label htmlFor="empID">Emp ID</label>
+    <div className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Add Employee</h1>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Emp ID</label>
           <input
-            id="empID"
             type="number"
-            name="empID"
             value={empID}
             onChange={(e) => setEmpID(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
-          <label htmlFor="firstName">First Name</label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">First Name</label>
           <input
-            id="firstName"
             type="text"
-            name="firstName"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
-          <label htmlFor="lastName">Last Name</label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Last Name</label>
           <input
-            id="lastName"
             type="text"
-            name="lastName"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
-          <label htmlFor="email">Email</label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Email</label>
           <input
-            id="email"
             type="email"
-            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
-          <label htmlFor="salary">Salary</label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Salary</label>
           <input
-            id="salary"
             type="number"
-            name="salary"
             value={salary}
             onChange={(e) => setSalary(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
-          <label htmlFor="date">DOJ</label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">DOJ</label>
           <input
-            id="date"
             type="date"
-            name="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
         </div>
-        <div className='button-container'>
-          <input type="submit" value="Add" className="button bg-blue-500 text-white" />
-          <input
-            style={{ marginLeft: '12px' }}
-            className="button muted-button"
-            type="button"
-            value="Cancel"
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={handleAdd}
+            className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-200"
+          >
+            Add
+          </button>
+          <button
             onClick={() => setIsAdding(false)}
-          />
+            className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-200"
+          >
+            Cancel
+          </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

@@ -6,12 +6,15 @@ export const fetchEmployees = async () => {
       headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) {
-      throw new Error(`Status: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Status: ${response.status}, Message: ${errorText}`);
     }
     const data = await response.json();
-    return Array.isArray(data) ? data : data.data && Array.isArray(data.data) ? data.data : [];
+    const result = Array.isArray(data) ? data : data.data && Array.isArray(data.data) ? data.data : [];
+    console.log('fetchEmployees success:', result);
+    return result;
   } catch (error) {
-    console.error('Fetch Error:', error.message);
+    console.error('fetchEmployees error:', error.message, error.stack);
     Swal.fire({
       icon: 'error',
       title: 'Error!',
@@ -26,12 +29,9 @@ export const addEmployee = async (newEmployee, employees, setEmployees, setIsAdd
   try {
     const response = await fetch('https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newEmployee),
     });
-
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Status: ${response.status}, Message: ${errorText}`);
@@ -39,7 +39,7 @@ export const addEmployee = async (newEmployee, employees, setEmployees, setIsAdd
     const addedEmployee = await response.json();
     const employeeToAdd = Array.isArray(addedEmployee) ? addedEmployee[addedEmployee.length - 1] : addedEmployee.id ? addedEmployee : { ...newEmployee, id: Date.now() };
     setEmployees([...employees, employeeToAdd]);
-    setIsAdding(false);
+    setIsAdding(false); 
     Swal.fire({
       icon: 'success',
       title: 'Added!',
@@ -47,8 +47,9 @@ export const addEmployee = async (newEmployee, employees, setEmployees, setIsAdd
       showConfirmButton: false,
       timer: 1500,
     });
+    console.log('addEmployee success:', employeeToAdd);
   } catch (error) {
-    console.error('Add Error:', error.message);
+    console.error('addEmployee error:', error.message, error.stack);
     Swal.fire({
       icon: 'error',
       title: 'Error!',
@@ -58,16 +59,13 @@ export const addEmployee = async (newEmployee, employees, setEmployees, setIsAdd
   }
 };
 
-export const updateEmployee = async (id, updatedEmployee, employees, setEmployees, setIsEditing) => {
+export const updateEmployee = async (id, updatedEmployee, employees, setEmployees) => {
   try {
     const response = await fetch(`https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedEmployee),
     });
-
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Status: ${response.status}, Message: ${errorText}`);
@@ -79,7 +77,6 @@ export const updateEmployee = async (id, updatedEmployee, employees, setEmployee
         employee.id === id ? employeeToUpdate : employee
       )
     );
-    setIsEditing(false);
     Swal.fire({
       icon: 'success',
       title: 'Updated!',
@@ -87,8 +84,9 @@ export const updateEmployee = async (id, updatedEmployee, employees, setEmployee
       showConfirmButton: false,
       timer: 1500,
     });
+    console.log('updateEmployee success:', employeeToUpdate);
   } catch (error) {
-    console.error('Update Error:', error.message);
+    console.error('updateEmployee error:', error.message, error.stack);
     Swal.fire({
       icon: 'error',
       title: 'Error!',
@@ -101,12 +99,10 @@ export const updateEmployee = async (id, updatedEmployee, employees, setEmployee
 export const deleteEmployee = async (id, employees, setEmployees) => {
   const [employee] = employees.filter((employee) => employee.id === id);
   try {
-    const response = await fetch(`https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data/${id}`,
-      {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
+    const response = await fetch(`https://686f2a3891e85fac429ff4c3.mockapi.io/api/v1/data/${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Status: ${response.status}, Message: ${errorText}`);
@@ -119,14 +115,14 @@ export const deleteEmployee = async (id, employees, setEmployees) => {
       showConfirmButton: false,
       timer: 1500,
     });
+    console.log('deleteEmployee success:', id);
   } catch (error) {
-    console.error('Delete Error:', error.message);
+    console.error('deleteEmployee error:', error.message, error.stack);
     Swal.fire({
       icon: 'error',
       title: 'Error!',
       text: `Failed to delete employee: ${error.message}`,
       showConfirmButton: true,
     });
-    throw error;
   }
 };
